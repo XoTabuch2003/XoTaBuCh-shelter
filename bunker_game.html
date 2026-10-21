@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ХОТАБИЧ БУНКЕР</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for Retro Pixel Aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bunker: {
+                            bg: '#0a140c',
+                            card: '#122416',
+                            green: '#39ff14',
+                            dimGreen: '#238816',
+                            darkGreen: '#0d3211',
+                            border: '#4caf50',
+                            text: '#80e080',
+                            alert: '#ff3333'
+                        }
+                    },
+                    fontFamily: {
+                        pixel: ['"Press Start 2P"', 'monospace'],
+                        vt: ['VT323', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Retro Pixelated Graphics & CRT Effect Styling */
+        body {
+            background-color: #050a06;
+            color: #80e080;
+            font-family: 'VT323', monospace;
+            touch-action: manipulation;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        .pixel-border {
+            border: 4px solid #39ff14;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.3), inset 0 0 8px rgba(0,0,0,0.8);
+            image-rendering: pixelated;
+        }
+
+        .pixel-border-dim {
+            border: 3px solid #1e5a22;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.9);
+        }
+
+        .pixel-btn {
+            background: #0d3211;
+            color: #39ff14;
+            border: 3px solid #39ff14;
+            box-shadow: 3px 3px 0px #000, inset -2px -2px 0px #1e5a22;
+            transition: all 0.1s ease;
+            text-transform: uppercase;
+        }
+
+        .pixel-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #000;
+            background: #1e5a22;
+        }
+
+        .pixel-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #446644;
+            color: #446644;
+        }
+
+        /* Scanline Overlay Effect */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 99;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Glitch & Loading Animations */
+        @keyframes fillBar {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        .loading-text-container {
+            position: relative;
+            display: inline-block;
+            background: #0d3211;
+            padding: 8px 16px;
+            border: 3px solid #39ff14;
+        }
+
+        .loading-bar-fill {
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            background-color: #39ff14;
+            z-index: 1;
+            transition: width 0.2s ease-out;
+        }
+
+        .loading-text {
+            position: relative;
+            z-index: 2;
+            mix-blend-mode: difference;
+            color: #ffffff;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        /* Grid Table Pixel Borders */
+        .grid-cell {
+            border: 2px solid #285e2b;
+            background: rgba(10, 25, 12, 0.85);
+        }
+
+        /* Animated Door Closing Canvas */
+        #bunkerDoorCanvas {
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center p-2 sm:p-4 text-xl">
+
+    <div class="scanlines"></div>
+
+    <!-- MAIN APP CONTAINER -->
+    <main id="appContainer" class="w-full max-w-md mx-auto my-auto flex flex-col items-center min-h-[90vh] justify-between z-10 relative">
+
+        <!-- ==================== SCREEN 1: LOADING SCREEN ==================== -->
+        <section id="loadingScreen" class="w-full flex-1 flex flex-col items-center justify-between p-4 py-8 text-center bg-cover bg-center rounded-lg" style="background-image: radial-gradient(circle, rgba(13,50,17,0.85) 0%, rgba(5,10,6,0.98) 100%);">
+            
+            <div class="mt-6">
+                <h1 class="font-pixel text-2xl sm:text-3xl text-bunker-green tracking-widest drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] mb-2">
+                    ХОТАБИЧ БУНКЕР
+                </h1>
+                <p class="text-bunker-text text-lg">СИСТЕМА ЗАХИСТУ v2.6</p>
+            </div>
+
+            <!-- Background Symbol Graphics Simulation -->
+            <div class="my-auto py-8 relative flex flex-col items-center">
+                <div class="w-32 h-32 text-bunker-green opacity-40 flex items-center justify-center border-4 border-bunker-green rounded-full p-2">
+                    <i class="fa-solid fa-biohazard text-7xl animate-pulse"></i>
+                </div>
+            </div>
+
+            <!-- Animated Loading Bar with text over top -->
+            <div class="w-full max-w-xs mb-8">
+                <div class="loading-text-container w-full overflow-hidden shadow-lg">
+                    <div id="loadingProgress" class="loading-bar-fill" style="width: 0%;"></div>
+                    <div class="loading-text font-pixel text-center text-sm sm:text-base">
+                        ЗАВАНТАЖЕННЯ...
+                    </div>
+                </div>
+                <div id="loadingStatusText" class="text-xs text-bunker-text mt-2 font-mono">Ініціалізація протоколів...</div>
+            </div>
+        </section>
+
+
+        <!-- ==================== SCREEN 2: MAIN MENU / LOBBY ==================== -->
+        <section id="menuScreen" class="w-full flex-1 hidden flex-col items-center justify-between p-4 py-6 bg-bunker-card pixel-border rounded-lg text-center">
+            
+            <div>
+                <h1 class="font-pixel text-xl sm:text-2xl text-bunker-green tracking-wider mb-1">
+                    ХОТАБИЧ БУНКЕР
+                </h1>
+                <p class="text-sm text-bunker-text border-b border-bunker-border pb-2">ГОЛОВНИЙ ТЕРМІНАЛ</p>
+            </div>
+
+            <div class="w-full my-4 space-y-4">
+                <!-- Player Name Input -->
+                <div class="text-left">
+                    <label class="block text-sm text-bunker-green mb-1 font-pixel">Ваше ім'я:</label>
+                    <input type="text" id="playerNameInput" maxlength="12" placeholder="Введіть нікнейм..." 
+                           class="w-full bg-black border-2 border-bunker-green text-bunker-green px-3 py-2 font-vt text-2xl focus:outline-none focus:ring-2 focus:ring-bunker-green">
+                </div>
+
+                <!-- Mode Selection Buttons -->
+                <div id="lobbyActionButtons" class="space-y-3 pt-2">
+                    <button id="btnCreateRoom" onclick="createRoom()" class="pixel-btn w-full py-3 font-pixel text-sm tracking-wide">
+                        <i class="fa-solid fa-plus-square mr-2"></i>Створити кімнату
+                    </button>
+                    
+                    <div class="flex gap-2">
+                        <input type="number" id="roomCodeInput" placeholder="1234" maxlength="4" pattern="\d*"
+                               class="w-1/2 bg-black border-2 border-bunker-border text-center text-bunker-green font-pixel text-lg focus:outline-none focus:border-bunker-green">
+                        <button id="btnJoinRoom" onclick="joinRoom()" class="pixel-btn w-1/2 py-3 font-pixel text-xs">
+                            Приєднатися
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lobby Active Screen (When inside a room) -->
+                <div id="lobbyRoomDetails" class="hidden bg-black p-3 border-2 border-bunker-border text-left">
+                    <div class="text-center mb-3">
+                        <span class="text-xs text-bunker-text block font-pixel">НОМЕР КІМНАТИ:</span>
+                        <div id="displayRoomCode" class="font-pixel text-3xl text-bunker-green bg-bunker-card py-2 border border-bunker-green mt-1 tracking-widest">
+                            ----
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <div class="flex justify-between items-center text-sm text-bunker-green border-b border-bunker-border pb-1 mb-2">
+                            <span>ГРАВЦІ У ЛОБІ:</span>
+                            <span id="playerCountBadge" class="font-bold">0</span>
+                        </div>
+                        <ul id="lobbyPlayerList" class="space-y-1 max-h-36 overflow-y-auto pr-1 text-lg">
+                            <!-- Players listed dynamically -->
+                        </ul>
+                    </div>
+
+                    <div id="hostControls" class="hidden mt-4 pt-2 border-t border-bunker-border">
+                        <p class="text-xs text-bunker-text mb-2 text-center">Мінімум 3 гравці для початку гри</p>
+                        <button id="btnStartGame" onclick="hostStartGame()" class="pixel-btn w-full py-3 font-pixel text-sm text-bunker-green">
+                            <i class="fa-solid fa-play mr-2"></i>РОЗПОЧАТИ ГРУ
+                        </button>
+                    </div>
+                    <div id="guestWaitingMessage" class="hidden text-center text-bunker-text py-2 animate-pulse text-sm">
+                        Очікування запуску хостом...
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-xs text-bunker-text opacity-70">
+                Кількість місць у бункері розраховується автоматично залежно від кількості гравців.
+            </div>
+        </section>
+
+
+        <!-- ==================== SCREEN 3: DISASTER / SCENARIO REVEAL ==================== -->
+        <section id="scenarioScreen" class="w-full flex-1 hidden flex-col items-center justify-between p-4 py-6 bg-bunker-card pixel-border rounded-lg text-center">
+            
+            <div class="w-full border-b-2 border-bunker-green pb-2">
+                <h2 class="font-pixel text-lg text-bunker-alert tracking-wide">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> АПОКАЛІПСИС
+                </h2>
+                <p class="text-xs text-bunker-text mt-1">КАТАСТРОФА СВІТОВОГО МАСШТАБУ</p>
+            </div>
+
+            <div class="my-4 bg-black p-4 border-2 border-bunker-border text-left w-full space-y-3">
+                <h3 id="scenarioTitle" class="font-pixel text-bunker-green text-base text-center border-b border-bunker-darkGreen pb-2">
+                    ЯДЕРНА ЗИМА
+                </h3>
+                <p id="scenarioDesc" class="text-bunker-text text-lg leading-tight">
+                    Завантаження сценарію...
+                </p>
+
+                <div class="bg-bunker-darkGreen p-2 border border-bunker-green text-xs space-y-1 mt-2">
+                    <div class="flex justify-between">
+                        <span>Усього врятуються:</span>
+                        <span id="scenarioCapacity" class="font-bold text-bunker-green">0 чоловік</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Залишиться ззовні:</span>
+                        <span id="scenarioEliminatedCount" class="font-bold text-bunker-alert">0 чоловік</span>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="goToCharacterCard()" class="pixel-btn w-full py-3 font-pixel text-sm">
+                ДАЛІ <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+        </section>
+
+
+        <!-- ==================== SCREEN 4: CHARACTER CARD ==================== -->
+        <section id="characterCardScreen" class="w-full flex-1 hidden flex-col items-center justify-between p-3 py-4 bg-bunker-card pixel-border rounded-lg">
+            
+            <!-- Top Header with title and Room code -->
+            <div class="w-full flex justify-between items-center border-b-2 border-bunker-green pb-2 mb-2">
+                <h2 class="font-pixel text-sm text-bunker-green">ХОТАБИЧ БУНКЕР</h2>
+                <div class="text-xs bg-black px-2 py-1 border border-bunker-border font-mono">
+                    КІМНАТА: <span id="cardRoomCode" class="text-bunker-green">1234</span>
+                </div>
+            </div>
+
+            <!-- Tab Buttons: My Card / Other Players -->
+            <div class="flex w-full gap-2 mb-2">
+                <button id="tabMyCardBtn" onclick="switchCardTab('my')" class="pixel-btn flex-1 py-1 text-xs font-pixel">
+                    МОЯ КАРТКА
+                </button>
+                <button id="tabPlayersBtn" onclick="switchCardTab('others')" class="pixel-btn flex-1 py-1 text-xs font-pixel bg-bunker-darkGreen">
+                    ГРАВЦІ (<span id="activePlayerBadge">0</span>)
+                </button>
+            </div>
+
+            <!-- View 1: Personal Character Grid (Exact visual layout from screenshot 2) -->
+            <div id="myCardView" class="w-full flex-1 flex flex-col justify-between my-1">
+                <div class="grid grid-cols-2 gap-1 font-vt text-2xl text-center w-full">
+                    
+                    <!-- Gender Row -->
+                    <div class="grid-cell p-2 flex items-center justify-center font-bold text-bunker-green">
+                        <span id="charGenderIcon" class="text-2xl mr-2">♂</span>
+                        <span id="charGenderVal">Чоло́вік</span>
+                    </div>
+                    <div class="grid-cell p-2 font-pixel text-sm flex items-center justify-center text-bunker-text">
+                        СТАТЬ
+                    </div>
+
+                    <!-- Age Row -->
+                    <div class="grid-cell p-2 font-pixel text-lg flex items-center justify-center text-bunker-green">
+                        <span id="charAgeVal">23</span>
+                    </div>
+                    <div class="grid-cell p-2 font-pixel text-sm flex items-center justify-center text-bunker-text">
+                        ВІК
+                    </div>
+
+                    <!-- Disease Row -->
+                    <div class="grid-cell p-2 font-vt text-xl flex items-center justify-center text-bunker-green leading-none">
+                        <span id="charHealthVal">Кіста</span>
+                    </div>
+                    <div class="grid-cell p-2 font-pixel text-sm flex items-center justify-center text-bunker-text">
+                        ХВОРОБА
+                    </div>
+
+                    <!-- Inventory Row -->
+                    <div class="grid-cell p-2 font-vt text-xl flex items-center justify-center text-bunker-green leading-none">
+                        <span id="charInventoryVal">Консерва</span>
+                    </div>
+                    <div class="grid-cell p-2 font-pixel text-sm flex items-center justify-center text-bunker-text">
+                        ІНВЕНТАР
+                    </div>
+
+                    <!-- Profession Row -->
+                    <div class="grid-cell p-2 font-vt text-xl flex items-center justify-center text-bunker-green leading-none">
+                        <span id="charProfessionVal">Дизайнер</span>
+                    </div>
+                    <div class="grid-cell p-2 font-pixel text-sm flex items-center justify-center text-bunker-text">
+                        ПРОФЕСІЯ
+                    </div>
+
+                    <!-- Worldview Trait Row -->
+                    <div class="grid-cell p-2 font-vt text-xl flex items-center justify-center text-bunker-green leading-none">
+                        <span id="charTraitVal">Анархіст</span>
+                    </div>
+                    <div class="grid-cell p-2 font-pixel text-sm flex items-center justify-center text-bunker-text">
+                        СВІТОГЛЯД
+                    </div>
+                </div>
+
+                <div class="bg-black p-2 border border-bunker-border text-xs mt-2 text-bunker-text">
+                    <span class="text-bunker-green font-pixel block mb-1 text-[10px]">ХОБІ ТА ХАРАКТЕРИСТИКА:</span>
+                    <span id="charHobbyVal">Гра на гітарі, високий рівень стресостійкості</span>
+                </div>
+            </div>
+
+            <!-- View 2: All Players Status -->
+            <div id="othersView" class="w-full flex-1 hidden my-1 overflow-y-auto max-h-[50vh] pr-1">
+                <div id="playersListContainer" class="space-y-2">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Bottom Discussion / Vote Navigation -->
+            <div class="w-full mt-3 pt-2 border-t border-bunker-darkGreen flex flex-col gap-2">
+                <div id="roundStatusIndicator" class="text-xs text-center text-bunker-text font-mono">
+                    Раунд 1: Обговорення кандидатів
+                </div>
+                <button id="btnProceedToVote" onclick="goToVotingScreen()" class="pixel-btn w-full py-2.5 font-pixel text-xs text-bunker-green">
+                    <i class="fa-solid fa-check-to-slot mr-1"></i> ПЕРЕЙТИ ДО ГОЛОСУВАННЯ
+                </button>
+            </div>
+        </section>
+
+
+        <!-- ==================== SCREEN 5: VOTING & ELIMINATION ==================== -->
+        <section id="votingScreen" class="w-full flex-1 hidden flex-col items-center justify-between p-4 py-5 bg-bunker-card pixel-border rounded-lg text-center">
+            
+            <div class="w-full border-b-2 border-bunker-green pb-2">
+                <h2 class="font-pixel text-base text-bunker-green">
+                    <i class="fa-solid fa-vote-yea mr-2"></i>ГОЛОСУВАННЯ
+                </h2>
+                <p class="text-xs text-bunker-text mt-1">ХТО МАЄ ПІТИ З БУНКЕРУ?</p>
+            </div>
+
+            <div class="my-3 w-full">
+                <p class="text-sm text-bunker-text mb-3 text-left">Оберіть гравця, який НЕ повинен потрапити до бункеру:</p>
+                <div id="votingCandidatesList" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+                    <!-- Dynamic Voting Buttons -->
+                </div>
+            </div>
+
+            <div id="votingStatusBox" class="w-full bg-black p-2 border border-bunker-border text-xs text-bunker-text mb-3">
+                Очікування голосів усіх гравців... (<span id="votesCastCount">0</span>/<span id="totalVotersCount">0</span>)
+            </div>
+
+            <button id="btnSubmitVote" disabled onclick="submitPlayerVote()" class="pixel-btn w-full py-3 font-pixel text-xs">
+                ПІДТВЕРДИТИ ГОЛОС
+            </button>
+        </section>
+
+
+        <!-- ==================== SCREEN 6: GAME OVER / DOOR CLOSING ==================== -->
+        <section id="gameOverScreen" class="w-full flex-1 hidden flex-col items-center justify-between p-4 py-6 bg-bunker-card pixel-border rounded-lg text-center">
+            
+            <div id="gameOverHeader" class="w-full border-b-2 border-bunker-green pb-2">
+                <h2 class="font-pixel text-lg text-bunker-green">
+                    БУНКЕР ЗАЧИНЕНО
+                </h2>
+                <p class="text-xs text-bunker-text mt-1">ПРОТОКОЛ ЗБЕРЕЖЕННЯ ЗАВЕРШЕНО</p>
+            </div>
+
+            <!-- Canvas for Retro Doors Animation -->
+            <div class="my-4 relative w-full flex justify-center items-center">
+                <canvas id="bunkerDoorCanvas" width="300" height="220" class="border-4 border-bunker-green rounded bg-black shadow-2xl"></canvas>
+            </div>
+
+            <!-- Results Summary -->
+            <div class="w-full bg-black p-3 border-2 border-bunker-border text-left space-y-2 max-h-40 overflow-y-auto">
+                <div class="text-xs font-pixel text-bunker-green border-b border-bunker-darkGreen pb-1">
+                    <i class="fa-solid fa-door-closed mr-1"></i> У БУНКЕРІ:
+                </div>
+                <ul id="survivorsList" class="text-lg text-bunker-green space-y-0.5">
+                    <!-- Survivor names -->
+                </ul>
+
+                <div class="text-xs font-pixel text-bunker-alert border-b border-bunker-darkGreen pb-1 pt-2">
+                    <i class="fa-solid fa-skull mr-1"></i> ЗАЛИШИЛИСЯ ЗЗОВНІ:
+                </div>
+                <ul id="eliminatedList" class="text-base text-bunker-text line-through space-y-0.5">
+                    <!-- Excluded names -->
+                </ul>
+            </div>
+
+            <button onclick="restartGameToMenu()" class="pixel-btn w-full py-3 font-pixel text-xs mt-3">
+                <i class="fa-solid fa-rotate-right mr-2"></i>ГРАТИ ЗНОВУ
+            </button>
+        </section>
+
+    </main>
+
+    <!-- Audio FX Toggle & Global Footer -->
+    <footer class="z-10 mt-2 text-center text-xs text-bunker-text flex items-center justify-between w-full max-w-md px-2">
+        <span>ХОТАБИЧ БУНКЕР &copy; 2026</span>
+        <button id="btnAudioToggle" onclick="toggleAudioMute()" class="text-bunker-green hover:underline focus:outline-none">
+            <i id="audioIcon" class="fa-solid fa-volume-high mr-1"></i> ЗВУК [УВІМК]
+        </button>
+    </footer>
+
+    <!-- Firebase Web SDK Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // APP CONFIG & GAME DATA
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'khotabych-bunker-default';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+
+        // LOCAL & STATE MANAGEMENT
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+        let currentRoomId = null;
+        let isHost = false;
+        let mySelectedVoteId = null;
+        let unsubRoomListener = null;
+        let soundEnabled = true;
+
+        // Local state fallback if running offline/without firebase setup
+        let isLocalMode = false;
+        let localRoomState = null;
+
+        // CHARACTER DATA POOLS (Ukrainian localization)
+        const GENDERS = ['Чоловік', 'Жінка'];
+        const DISEASES = ['Кіста', 'Астма', 'Алергія на пил', 'Безсоння', 'Дальтонізм', 'Подагра', 'Артрит', 'Аритмія', 'Мігрень', 'Цукровий діабет', 'Ідеально здоровий'];
+        const INVENTORIES = ['Консерва', 'Ліхтарик', 'Ніж', 'Рація', 'Аптечка', 'Каністра бензину', 'Сірники', 'Спальний мішок', 'Фільтр для води', 'Набір інструментів', 'Книга рецептів'];
+        const PROFESSIONS = ['Дизайнер', 'Лікар', 'Інженер', 'Агроном', 'Вчитель', 'Електрик', 'Поліцейський', 'Програміст', 'Кухар', 'Військовий', 'Будівельник', 'Психолог'];
+        const TRAITS = ['Анархіст', 'Пацифіст', 'Прагматик', 'Оптиміст', 'Скептик', 'Лідер', 'Альтруїст', 'Егоїст', 'Раціоналіст', 'Альпініст'];
+        const HOBBIES = ['Гра на гітарі', 'Шахи', 'Бойові мистецтва', 'Стрільба з лука', 'Кулінарія', 'Рукопашний бій', 'Медитація', 'Ремонт електроніки', 'Малювання'];
+
+        const DISASTERS = [
+            {
+                title: 'ЯДЕРНА ЗИМА',
+                desc: 'Після масованого ядерного удару температура на поверхні впала до -45°C. Радіаційний фон перевищує норму у тисячу разів. Бункер забезпечений обігрівом та автофільтрацією повітря.'
+            },
+            {
+                title: 'ВІРУСНИЙ СПАЛАХ',
+                desc: 'Невідомий смертельний вірус поразив 99% населення Землі. Передається повітряно-крапельним шляхом. Бункер оснащений герметичним шлюзом та медичним де Contamination відсіком.'
+            },
+            {
+                title: 'АСТЕРОЇДНИЙ УДАР',
+                desc: 'Гігантський астероїд зіткнувся з Землею, спричинивши суцільні землетруси та цунамі. Поверхня вкрита попелом та токсичними газами. Бункер розташований у скелястій породі.'
+            },
+            {
+                title: 'ТЕХНОГЕННА КАТАСТРОФА',
+                desc: 'Вибух на мережі хімічних реакторів отруїв атмосферу. Живі організми гинуть протягом кількох хвилин на відкритому повітрі.'
+            }
+        ];
+
+        // SYNTHESIZER AUDIO ENGINE (Web Audio API - No external files needed)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playRetroSound(type) {
+            if (!soundEnabled || !audioCtx) return;
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.05);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'start') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.setValueAtTime(440, now + 0.1);
+                    osc.frequency.setValueAtTime(880, now + 0.2);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'doorClose') {
+                    // Heavy Sub-bass boom & screech effect
+                    const noiseOsc = audioCtx.createOscillator();
+                    const noiseGain = audioCtx.createGain();
+                    noiseOsc.type = 'sawtooth';
+                    noiseOsc.frequency.setValueAtTime(150, now);
+                    noiseOsc.frequency.exponentialRampToValueAtTime(30, now + 1.2);
+                    noiseGain.gain.setValueAtTime(0.3, now);
+                    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+
+                    noiseOsc.connect(noiseGain);
+                    noiseGain.connect(audioCtx.destination);
+                    noiseOsc.start(now);
+                    noiseOsc.stop(now + 1.2);
+                }
+            } catch(e) { console.log('Audio playback context err', e); }
+        }
+
+        window.toggleAudioMute = function() {
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('btnAudioToggle');
+            const icon = document.getElementById('audioIcon');
+            if (soundEnabled) {
+                btn.innerHTML = `<i id="audioIcon" class="fa-solid fa-volume-high mr-1"></i> ЗВУК [УВІМК]`;
+            } else {
+                btn.innerHTML = `<i id="audioIcon" class="fa-solid fa-volume-xmark mr-1"></i> ЗВУК [ВИМК]`;
+            }
+        };
+
+        // INITIALIZE FIREBASE & USER AUTH
+        async function initAuth() {
+            if (!firebaseConfig) {
+                console.warn('No Firebase config provided. Falling back to local offline mode.');
+                isLocalMode = true;
+                currentUser = { uid: 'player_' + Math.random().toString(36).substring(2, 7) };
+                return;
+            }
+
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                currentUser = auth.currentUser;
+            } catch (err) {
+                console.error('Firebase initialization error:', err);
+                isLocalMode = true;
+                currentUser = { uid: 'player_' + Math.random().toString(36).substring(2, 7) };
+            }
+        }
+
+        // SCREEN NAVIGATOR
+        function showScreen(screenId) {
+            const screens = ['loadingScreen', 'menuScreen', 'scenarioScreen', 'characterCardScreen', 'votingScreen', 'gameOverScreen'];
+            screens.forEach(id => {
+                const el = document.getElementById(id);
+                if (id === screenId) {
+                    el.classList.remove('hidden');
+                    el.classList.add('flex');
+                } else {
+                    el.classList.add('hidden');
+                    el.classList.remove('flex');
+                }
+            });
+        }
+
+        // SCREEN 1: LOADING ANIMATION
+        function startLoadingSequence() {
+            const progressBar = document.getElementById('loadingProgress');
+            const statusText = document.getElementById('loadingStatusText');
+            let progress = 0;
+
+            const statuses = [
+                'З\'єднання з бункером...',
+                'Перевірка системи фільтрації...',
+                'Генерація персональних даних...',
+                'Завантаження інтерфейсу...'
+            ];
+
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 15) + 10;
+                if (progress > 100) progress = 100;
+                
+                progressBar.style.width = `${progress}%`;
+                statusText.innerText = statuses[Math.floor((progress / 100) * (statuses.length - 1))];
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        showScreen('menuScreen');
+                    }, 500);
+                }
+            }, 180);
+        }
+
+        // GENERATE CHARACTER DATA
+        function generateRandomCharacter(name) {
+            const gender = GENDERS[Math.floor(Math.random() * GENDERS.length)];
+            return {
+                id: currentUser.uid,
+                name: name || 'ГРАВЕЦЬ',
+                gender: gender,
+                genderIcon: gender === 'Чоловік' ? '♂' : '♀',
+                age: Math.floor(Math.random() * 45) + 18,
+                disease: DISEASES[Math.floor(Math.random() * DISEASES.length)],
+                inventory: INVENTORIES[Math.floor(Math.random() * INVENTORIES.length)],
+                profession: PROFESSIONS[Math.floor(Math.random() * PROFESSIONS.length)],
+                trait: TRAITS[Math.floor(Math.random() * TRAITS.length)],
+                hobby: HOBBIES[Math.floor(Math.random() * HOBBIES.length)],
+                isEliminated: false,
+                isHost: false
+            };
+        }
+
+        // GET FIRESTORE ROOM REF
+        function getRoomDocRef(code) {
+            return doc(db, 'artifacts', appId, 'public', 'data', 'bunker_rooms', code);
+        }
+
+        // CREATE ROOM
+        window.createRoom = async function() {
+            playRetroSound('click');
+            const nameInput = document.getElementById('playerNameInput').value.trim();
+            if (!nameInput) {
+                alert('Будь ласка, введіть ваше ім\'я!');
+                return;
+            }
+
+            const roomCode = Math.floor(1000 + Math.random() * 9000).toString();
+            currentRoomId = roomCode;
+            isHost = true;
+
+            const myChar = generateRandomCharacter(nameInput);
+            myChar.isHost = true;
+
+            const initialScenario = DISASTERS[Math.floor(Math.random() * DISASTERS.length)];
+
+            const roomData = {
+                code: roomCode,
+                status: 'LOBBY', // LOBBY, SCENARIO, PLAYING, VOTING, GAMEOVER
+                players: { [currentUser.uid]: myChar },
+                scenario: initialScenario,
+                currentRound: 1,
+                votes: {},
+                createdAt: Date.now()
+            };
+
+            if (isLocalMode) {
+                localRoomState = roomData;
+                updateLobbyUI(roomData);
+            } else {
+                try {
+                    await setDoc(getRoomDocRef(roomCode), roomData);
+                    listenToRoom(roomCode);
+                } catch(e) {
+                    console.error('Error creating room:', e);
+                    alert('Помилка створення кімнати.');
+                    return;
+                }
+            }
+
+            document.getElementById('lobbyActionButtons').classList.add('hidden');
+            document.getElementById('lobbyRoomDetails').classList.remove('hidden');
+            document.getElementById('hostControls').classList.remove('hidden');
+            document.getElementById('guestWaitingMessage').classList.add('hidden');
+            document.getElementById('displayRoomCode').innerText = roomCode;
+        };
+
+        // JOIN ROOM
+        window.joinRoom = async function() {
+            playRetroSound('click');
+            const nameInput = document.getElementById('playerNameInput').value.trim();
+            const codeInput = document.getElementById('roomCodeInput').value.trim();
+
+            if (!nameInput || !codeInput) {
+                alert('Введіть ім\'я та 4-значний код кімнати!');
+                return;
+            }
+
+            currentRoomId = codeInput;
+            isHost = false;
+
+            const myChar = generateRandomCharacter(nameInput);
+
+            if (isLocalMode) {
+                if (!localRoomState || localRoomState.code !== codeInput) {
+                    alert('Кімнату не знайдено!');
+                    return;
+                }
+                localRoomState.players[currentUser.uid] = myChar;
+                updateLobbyUI(localRoomState);
+            } else {
+                try {
+                    const roomSnap = await getDoc(getRoomDocRef(codeInput));
+                    if (!roomSnap.exists()) {
+                        alert('Кімнату з таким кодом не знайдено!');
+                        return;
+                    }
+                    const roomData = roomSnap.data();
+                    if (roomData.status !== 'LOBBY') {
+                        alert('Гра в цій кімнаті вже розпочалася!');
+                        return;
+                    }
+
+                    roomData.players[currentUser.uid] = myChar;
+                    await updateDoc(getRoomDocRef(codeInput), {
+                        [`players.${currentUser.uid}`]: myChar
+                    });
+
+                    listenToRoom(codeInput);
+                } catch(e) {
+                    console.error('Error joining room:', e);
+                    alert('Помилка приєднатися до кімнати.');
+                    return;
+                }
+            }
+
+            document.getElementById('lobbyActionButtons').classList.add('hidden');
+            document.getElementById('lobbyRoomDetails').classList.remove('hidden');
+            document.getElementById('hostControls').classList.add('hidden');
+            document.getElementById('guestWaitingMessage').classList.remove('hidden');
+            document.getElementById('displayRoomCode').innerText = codeInput;
+        };
+
+        // REALTIME ROOM SUBSCRIPTION
+        function listenToRoom(code) {
+            if (unsubRoomListener) unsubRoomListener();
+
+            unsubRoomListener = onSnapshot(getRoomDocRef(code), (snapshot) => {
+                if (!snapshot.exists()) return;
+                const roomData = snapshot.data();
+                handleRoomStateUpdate(roomData);
+            }, (error) => {
+                console.error("Room listener failed:", error);
+            });
+        }
+
+        // ROOM STATE SWITCHER & SYNC
+        function handleRoomStateUpdate(roomData) {
+            const playersList = Object.values(roomData.players || {});
+            
+            // Render lobby player list
+            updateLobbyUI(roomData);
+
+            // Handle transition screens
+            if (roomData.status === 'SCENARIO') {
+                renderScenarioScreen(roomData);
+            } else if (roomData.status === 'PLAYING') {
+                renderCharacterCardScreen(roomData);
+            } else if (roomData.status === 'VOTING') {
+                renderVotingScreen(roomData);
+            } else if (roomData.status === 'GAMEOVER') {
+                renderGameOverScreen(roomData);
+            }
+        }
+
+        // UPDATE LOBBY UI
+        function updateLobbyUI(roomData) {
+            const playersArr = Object.values(roomData.players || {});
+            document.getElementById('playerCountBadge').innerText = playersArr.length;
+            
+            const listEl = document.getElementById('lobbyPlayerList');
+            listEl.innerHTML = '';
+            
+            playersArr.forEach(p => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center justify-between bg-bunker-card px-2 py-1 border border-bunker-darkGreen';
+                li.innerHTML = `
+                    <span class="text-bunker-green font-bold"><i class="fa-solid fa-user text-xs mr-1"></i> ${p.name}</span>
+                    ${p.isHost ? '<span class="text-[10px] bg-bunker-green text-black px-1 font-pixel">ХОСТ</span>' : ''}
+                `;
+                listEl.appendChild(li);
+            });
+        }
+
+        // HOST STARTS GAME
+        window.hostStartGame = async function() {
+            playRetroSound('start');
+            const roomData = isLocalMode ? localRoomState : (await getDoc(getRoomDocRef(currentRoomId))).data();
+            const playersArr = Object.values(roomData.players || {});
+
+            if (playersArr.length < 2) {
+                alert('Для гри потрібно щонайменше 2 гравці!');
+                return;
+            }
+
+            // Calculate Bunker Capacity rule based on total count
+            // Rule logic: 2-3 players = 1 seat, 4-5 players = 2 seats, 6-7 = 3 seats, etc.
+            const capacity = Math.max(1, Math.floor(playersArr.length / 2));
+            
+            const updates = {
+                status: 'SCENARIO',
+                bunkerCapacity: capacity
+            };
+
+            if (isLocalMode) {
+                Object.assign(localRoomState, updates);
+                handleRoomStateUpdate(localRoomState);
+            } else {
+                await updateDoc(getRoomDocRef(currentRoomId), updates);
+            }
+        };
+
+        // RENDER SCENARIO SCREEN
+        function renderScenarioScreen(roomData) {
+            const scenario = roomData.scenario;
+            const totalPlayers = Object.keys(roomData.players).length;
+            const capacity = roomData.bunkerCapacity || Math.max(1, Math.floor(totalPlayers / 2));
+            const eliminatedCount = totalPlayers - capacity;
+
+            document.getElementById('scenarioTitle').innerText = scenario.title;
+            document.getElementById('scenarioDesc').innerText = scenario.desc;
+            document.getElementById('scenarioCapacity').innerText = `${capacity} осіб`;
+            document.getElementById('scenarioEliminatedCount').innerText = `${eliminatedCount} осіб`;
+
+            showScreen('scenarioScreen');
+        }
+
+        window.goToCharacterCard = async function() {
+            playRetroSound('click');
+            if (isHost) {
+                if (isLocalMode) {
+                    localRoomState.status = 'PLAYING';
+                    handleRoomStateUpdate(localRoomState);
+                } else {
+                    await updateDoc(getRoomDocRef(currentRoomId), { status: 'PLAYING' });
+                }
+            } else {
+                showScreen('characterCardScreen');
+            }
+        };
+
+        // RENDER CHARACTER CARD SCREEN
+        function renderCharacterCardScreen(roomData) {
+            const myData = roomData.players[currentUser.uid];
+            if (!myData) return;
+
+            document.getElementById('cardRoomCode').innerText = roomData.code;
+            document.getElementById('charGenderIcon').innerText = myData.genderIcon;
+            document.getElementById('charGenderVal').innerText = myData.gender;
+            document.getElementById('charAgeVal').innerText = myData.age;
+            document.getElementById('charHealthVal').innerText = myData.disease;
+            document.getElementById('charInventoryVal').innerText = myData.inventory;
+            document.getElementById('charProfessionVal').innerText = myData.profession;
+            document.getElementById('charTraitVal').innerText = myData.trait;
+            document.getElementById('charHobbyVal').innerText = `${myData.hobby}`;
+
+            // Render list of other players
+            const playersArr = Object.values(roomData.players);
+            const activePlayers = playersArr.filter(p => !p.isEliminated);
+            document.getElementById('activePlayerBadge').innerText = activePlayers.length;
+
+            const container = document.getElementById('playersListContainer');
+            container.innerHTML = '';
+
+            playersArr.forEach(p => {
+                const card = document.createElement('div');
+                const isMe = p.id === currentUser.uid;
+                card.className = `p-2 border ${p.isEliminated ? 'border-bunker-alert bg-red-950/20 opacity-60' : 'border-bunker-border bg-black'} rounded`;
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-center text-sm border-b border-bunker-darkGreen pb-1 mb-1">
+                        <span class="font-bold ${isMe ? 'text-bunker-green' : 'text-white'}">
+                            ${p.name} ${isMe ? '(Ви)' : ''}
+                        </span>
+                        <span class="text-xs ${p.isEliminated ? 'text-bunker-alert' : 'text-bunker-green'} font-pixel">
+                            ${p.isEliminated ? 'ВИБУВ' : 'У ГРІ'}
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 text-xs text-bunker-text gap-x-2">
+                        <div>Професія: <span class="text-white">${p.profession}</span></div>
+                        <div>Вік: <span class="text-white">${p.age}</span></div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById('roundStatusIndicator').innerText = `Раунд ${roomData.currentRound}: Обговорення кандидатів`;
+            showScreen('characterCardScreen');
+        }
+
+        window.switchCardTab = function(tab) {
+            playRetroSound('click');
+            const myBtn = document.getElementById('tabMyCardBtn');
+            const othersBtn = document.getElementById('tabPlayersBtn');
+            const myView = document.getElementById('myCardView');
+            const othersView = document.getElementById('othersView');
+
+            if (tab === 'my') {
+                myBtn.classList.remove('bg-bunker-darkGreen');
+                othersBtn.classList.add('bg-bunker-darkGreen');
+                myView.classList.remove('hidden');
+                myView.classList.add('flex');
+                othersView.classList.add('hidden');
+            } else {
+                othersBtn.classList.remove('bg-bunker-darkGreen');
+                myBtn.classList.add('bg-bunker-darkGreen');
+                othersView.classList.remove('hidden');
+                myView.classList.add('hidden');
+                myView.classList.remove('flex');
+            }
+        };
+
+        window.goToVotingScreen = async function() {
+            playRetroSound('click');
+            if (isHost) {
+                if (isLocalMode) {
+                    localRoomState.status = 'VOTING';
+                    localRoomState.votes = {};
+                    handleRoomStateUpdate(localRoomState);
+                } else {
+                    await updateDoc(getRoomDocRef(currentRoomId), {
+                        status: 'VOTING',
+                        votes: {}
+                    });
+                }
+            } else {
+                showScreen('votingScreen');
+            }
+        };
+
+        // RENDER VOTING SCREEN
+        function renderVotingScreen(roomData) {
+            const players = roomData.players;
+            const activePlayers = Object.values(players).filter(p => !p.isEliminated);
+            const votes = roomData.votes || {};
+
+            const container = document.getElementById('votingCandidatesList');
+            container.innerHTML = '';
+
+            mySelectedVoteId = votes[currentUser.uid] || null;
+
+            activePlayers.forEach(p => {
+                if (p.id === currentUser.uid) return; // Don't vote for self
+
+                const btn = document.createElement('button');
+                const isSelected = mySelectedVoteId === p.id;
+                
+                btn.className = `w-full text-left p-3 border-2 ${isSelected ? 'border-bunker-green bg-bunker-darkGreen' : 'border-bunker-border bg-black'} rounded flex justify-between items-center`;
+                btn.onclick = () => selectCandidateForVote(p.id);
+
+                btn.innerHTML = `
+                    <div>
+                        <div class="font-bold text-white text-base">${p.name}</div>
+                        <div class="text-xs text-bunker-text">${p.profession}, ${p.disease}</div>
+                    </div>
+                    ${isSelected ? '<i class="fa-solid fa-check-circle text-bunker-green text-xl"></i>' : ''}
+                `;
+                container.appendChild(btn);
+            });
+
+            const votesCast = Object.keys(votes).length;
+            const totalVoters = activePlayers.length;
+
+            document.getElementById('votesCastCount').innerText = votesCast;
+            document.getElementById('totalVotersCount').innerText = totalVoters;
+
+            const submitBtn = document.getElementById('btnSubmitVote');
+            submitBtn.disabled = !mySelectedVoteId;
+
+            // Automatically calculate round results if all votes are in (Host handles calculation)
+            if (isHost && votesCast >= totalVoters && totalVoters > 0) {
+                processVotingResults(roomData);
+            }
+
+            showScreen('votingScreen');
+        }
+
+        function selectCandidateForVote(targetId) {
+            playRetroSound('click');
+            mySelectedVoteId = targetId;
+            document.getElementById('btnSubmitVote').disabled = false;
+            
+            // Update button styles
+            const buttons = document.getElementById('votingCandidatesList').querySelectorAll('button');
+            buttons.forEach(b => {
+                b.classList.remove('border-bunker-green', 'bg-bunker-darkGreen');
+                b.classList.add('border-bunker-border', 'bg-black');
+            });
+            event.currentTarget.classList.add('border-bunker-green', 'bg-bunker-darkGreen');
+        }
+
+        window.submitPlayerVote = async function() {
+            playRetroSound('click');
+            if (!mySelectedVoteId) return;
+
+            if (isLocalMode) {
+                localRoomState.votes[currentUser.uid] = mySelectedVoteId;
+                renderVotingScreen(localRoomState);
+            } else {
+                await updateDoc(getRoomDocRef(currentRoomId), {
+                    [`votes.${currentUser.uid}`]: mySelectedVoteId
+                });
+            }
+
+            document.getElementById('btnSubmitVote').disabled = true;
+            document.getElementById('btnSubmitVote').innerText = 'ГОЛОС ПРИЙНЯТО';
+        };
+
+        // PROCESS VOTING RESULTS
+        async function processVotingResults(roomData) {
+            const votes = roomData.votes || {};
+            const tally = {};
+
+            Object.values(votes).forEach(targetId => {
+                tally[targetId] = (tally[targetId] || 0) + 1;
+            });
+
+            // Find player with max votes
+            let eliminatedId = null;
+            let maxVotes = -1;
+
+            Object.keys(tally).forEach(id => {
+                if (tally[id] > maxVotes) {
+                    maxVotes = tally[id];
+                    eliminatedId = id;
+                }
+            });
+
+            // If no clear votes, pick first target
+            if (!eliminatedId && Object.keys(votes).length > 0) {
+                eliminatedId = Object.values(votes)[0];
+            }
+
+            if (eliminatedId) {
+                roomData.players[eliminatedId].isEliminated = true;
+            }
+
+            const activePlayers = Object.values(roomData.players).filter(p => !p.isEliminated);
+            const capacity = roomData.bunkerCapacity || Math.max(1, Math.floor(Object.keys(roomData.players).length / 2));
+
+            // Check if capacity reached
+            let nextStatus = 'PLAYING';
+            if (activePlayers.length <= capacity) {
+                nextStatus = 'GAMEOVER';
+            }
+
+            const updates = {
+                players: roomData.players,
+                status: nextStatus,
+                currentRound: roomData.currentRound + 1,
+                votes: {}
+            };
+
+            if (isLocalMode) {
+                Object.assign(localRoomState, updates);
+                handleRoomStateUpdate(localRoomState);
+            } else {
+                await updateDoc(getRoomDocRef(currentRoomId), updates);
+            }
+        }
+
+        // RENDER GAME OVER SCREEN & DOOR ANIMATION
+        function renderGameOverScreen(roomData) {
+            showScreen('gameOverScreen');
+            playRetroSound('doorClose');
+
+            const players = Object.values(roomData.players);
+            const survivors = players.filter(p => !p.isEliminated);
+            const eliminated = players.filter(p => p.isEliminated);
+
+            const survivorsList = document.getElementById('survivorsList');
+            survivorsList.innerHTML = '';
+            survivors.forEach(p => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fa-solid fa-shield-halved mr-1 text-xs"></i> ${p.name} (${p.profession})`;
+                survivorsList.appendChild(li);
+            });
+
+            const eliminatedList = document.getElementById('eliminatedList');
+            eliminatedList.innerHTML = '';
+            eliminated.forEach(p => {
+                const li = document.createElement('li');
+                li.innerText = `${p.name} (${p.profession})`;
+                eliminatedList.appendChild(li);
+            });
+
+            // Trigger Canvas Bunker Closing Doors Animation
+            animateBunkerDoors();
+        }
+
+        // RETRO CANVAS DOOR ANIMATION
+        function animateBunkerDoors() {
+            const canvas = document.getElementById('bunkerDoorCanvas');
+            const ctx = canvas.getContext('2d');
+            let progress = 0;
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Background inside bunker
+                ctx.fillStyle = '#1e381f';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Door metallic pattern inside
+                ctx.fillStyle = '#0a140c';
+                ctx.font = '16px VT323';
+                ctx.fillText('СЕКТОР БУНКЕРУ 01 - ЗАЧИНЕНО', 40, 110);
+
+                // Left Door sliding
+                const leftDoorX = (progress / 100) * (canvas.width / 2) - (canvas.width / 2);
+                ctx.fillStyle = '#0d3211';
+                ctx.fillRect(leftDoorX, 0, canvas.width / 2, canvas.height);
+                ctx.strokeStyle = '#39ff14';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(leftDoorX, 0, canvas.width / 2, canvas.height);
+
+                // Right Door sliding
+                const rightDoorX = canvas.width - ((progress / 100) * (canvas.width / 2));
+                ctx.fillRect(rightDoorX, 0, canvas.width / 2, canvas.height);
+                ctx.strokeRect(rightDoorX, 0, canvas.width / 2, canvas.height);
+
+                // Lock Symbol in Middle when closed
+                if (progress >= 95) {
+                    ctx.fillStyle = '#39ff14';
+                    ctx.beginPath();
+                    ctx.arc(canvas.width / 2, canvas.height / 2, 20, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#000000';
+                    ctx.font = '14px "Press Start 2P"';
+                    ctx.fillText('🔒', canvas.width / 2 - 10, canvas.height / 2 + 6);
+                }
+
+                if (progress < 100) {
+                    progress += 2;
+                    requestAnimationFrame(draw);
+                }
+            }
+
+            draw();
+        }
+
+        window.restartGameToMenu = function() {
+            playRetroSound('click');
+            location.reload();
+        };
+
+        // INITIAL ONLOAD START
+        window.onload = async function() {
+            await initAuth();
+            startLoadingSequence();
+        };
+    </script>
+</body>
+</html>
